@@ -46,5 +46,25 @@ public class AccountService {
     account.setCustomerName(customerName);
 
     return accountRepository.save(account);
+    }
+
+    public Account deposit(Long id, BigDecimal  amount) {
+    Account acc = accountRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
+
+    acc.setBalance(acc.getBalance().add(amount));
+    return accountRepository.save(acc);
 }
+
+    public Account withdraw(Long id, BigDecimal  amount) {
+    Account acc = accountRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
+
+    if (acc.getBalance().compareTo(amount) < 0) {
+        throw new RuntimeException("Insufficient funds");
+    }
+
+    acc.setBalance(acc.getBalance().subtract(amount));
+    return accountRepository.save(acc);
+    }
 }

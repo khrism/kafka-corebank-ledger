@@ -1,0 +1,124 @@
+openapi: 3.0.3
+info:
+  title: Core Banking Transaction API
+  description: Simple Deposit and Withdraw APIs for Account Service
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+
+paths:
+
+  /accounts/{id}/deposit:
+    post:
+      summary: Deposit money into account
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+              properties:
+                amount:
+                  type: number
+                  format: decimal
+                  example: 1000.00
+      responses:
+        "200":
+          description: Deposit successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        "404":
+          description: Account not found
+        "400":
+          description: Invalid amount
+
+  /accounts/{id}/withdraw:
+    post:
+      summary: Withdraw money from account
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+              properties:
+                amount:
+                  type: number
+                  format: decimal
+                  example: 500.00
+      responses:
+        "200":
+          description: Withdraw successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        "404":
+          description: Account not found
+        "400":
+          description: Invalid amount
+        "409":
+          description: Insufficient funds
+
+  /accounts/{id}/transactions:
+    get:
+      summary: Get transaction history for account
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of transactions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionResponse'
+        "404":
+          description: Account not found
+
+components:
+  schemas:
+
+    TransactionResponse:
+      type: object
+      properties:
+        transactionId:
+          type: integer
+        accountId:
+          type: integer
+        type:
+          type: string
+          enum: [DEPOSIT, WITHDRAW]
+        amount:
+          type: number
+          format: decimal
+        balanceAfter:
+          type: number
+          format: decimal
+        timestamp:
+          type: string
+          format: date-time

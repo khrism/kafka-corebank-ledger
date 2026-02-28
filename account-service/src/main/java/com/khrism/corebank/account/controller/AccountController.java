@@ -5,6 +5,7 @@ import com.khrism.corebank.account.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -38,5 +39,14 @@ public class AccountController {
     public Account update(@PathVariable Long id,
                           @RequestParam String customerName) {
         return accountService.update(id, customerName);
+    }
+    @PutMapping("/{id}/deposit")
+    public Account deposit(@PathVariable Long id, @RequestParam BigDecimal  amount) {
+        return accountService.deposit(id, amount);
+    }
+
+    @PutMapping("/{id}/withdraw")
+    public Account withdraw(@PathVariable Long id, @RequestParam BigDecimal  amount) {
+        return accountService.withdraw(id, amount);
     }
 }
